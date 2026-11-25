@@ -148,7 +148,7 @@ const services = {}
 const prompts = []
 let webEnabled = true
 // ---- 假 Cordys CRM 服务（真实 HTTP）：验证插件内置的 CRM 客户端
-const crmState = { calls: [], searchHits: () => [] }
+const crmState = { calls: [], searchHits: () => [], denySettings: false }
 const crmServer = http.createServer(async (req, res) => {
   const chunks = []
   for await (const chunk of req) chunks.push(chunk)
@@ -166,6 +166,11 @@ const crmServer = http.createServer(async (req, res) => {
   crmState.calls.push({ method: req.method, path: url.pathname, body })
   if (url.pathname === '/personal/center/info') return send({ userId: 'admin', name: '管理员', phone: '4000000000' })
   if (url.pathname === '/account/page') return send({ records: [], total: 0 })
+  if ((url.pathname === '/lead-pool/page' || url.pathname === '/product/page') && crmState.denySettings) {
+    // 模拟 API Key 权限不足：Cordys 返回 403 + 业务码
+    res.writeHead(403, { 'content-type': 'application/json' })
+    return res.end(JSON.stringify({ code: 403, message: url.pathname === '/lead-pool/page' ? 'Subject does not have permission [MODULE_SETTING:UPDATE]' : 'Subject does not have permission [PRODUCT_MANAGEMENT:READ]', data: null }))
+  }
   if (url.pathname === '/lead-pool/page') return send({ records: [{ id: 'pool_1', name: 'EvSim线索公海' }], total: 1 })
   if (url.pathname === '/product/page') return send({ records: [{ id: 'product_1', name: 'EvSim' }], total: 1 })
   if (url.pathname.startsWith('/global/search/')) {
@@ -672,6 +677,14 @@ const crmOpts = await request('/data-collector/crm/options')
 check('CRM 选项：可写', crmOpts.status === 200 && crmOpts.json.writable === true, crmOpts.json)
 check('CRM 选项：线索池', crmOpts.json.pools.some((pool) => pool.name === 'EvSim线索公海'), crmOpts.json.pools)
 check('CRM 选项：产品', crmOpts.json.products.some((product) => product.name === 'EvSim'), crmOpts.json.products)
+// 权限不足：清单接口 403 时不静默变空，返回 warnings 供界面提示
+crmState.denySettings = true
+const deniedOpts = await request('/data-collector/crm/options')
+crmState.denySettings = false
+check('权限不足：线索池为空', deniedOpts.json.pools.length === 0, deniedOpts.json.pools)
+check('权限不足：返回 warnings', Array.isArray(deniedOpts.json.warnings) && deniedOpts.json.warnings.length === 2, deniedOpts.json.warnings)
+check('权限不足：提示缺失的权限名', deniedOpts.json.warnings.some((item) => String(item.message).includes('MODULE_SETTING:UPDATE')), deniedOpts.json.warnings)
+check('权限不足：产品权限提示', deniedOpts.json.warnings.some((item) => String(item.message).includes('PRODUCT_MANAGEMENT:READ')), deniedOpts.json.warnings)
 const crmConfig = await post('/data-collector/crm/config', { crm: { poolId: 'pool_1', poolName: 'EvSim线索公海' } })
 check('保存线索池', crmConfig.status === 200 && crmConfig.json.crm.poolId === 'pool_1', crmConfig.json)
 

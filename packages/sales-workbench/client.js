@@ -1286,6 +1286,9 @@ window.__ModuleLoader__.load({
             h('button', { type: 'button', style: withDisabled(primaryButton, selected.length === 0 || crmBusy === 'precheck'), disabled: selected.length === 0 || crmBusy === 'precheck', onClick: onCrmPrecheck }, crmBusy === 'precheck' ? '预检中…' : '写入 CRM'),
             h('span', { style: hint }, `已选 ${selected.length} 条`),
           ),
+          crmOptions && crmOptions.warnings && crmOptions.warnings.length > 0
+            ? h('div', { style: { ...hint, color: DANGER, marginTop: 6 } }, `CRM 清单拉取失败：${crmOptions.warnings.map((item) => `${item.source}：${item.message}`).join('；')}。可在「CRM」页手动填写 ID。`)
+            : null,
         ),
         results === null
           ? h('div', { style: { ...card, ...hint } }, busy === 'results' ? '加载中…' : '还没有加载线索。')
@@ -1341,6 +1344,8 @@ window.__ModuleLoader__.load({
         readOnly: saved.readOnly !== false,
       })
       const [loadedAt, setLoadedAt] = useState(saved.baseUrl || '')
+      const [manualPoolId, setManualPoolId] = useState('')
+      const [manualProductId, setManualProductId] = useState('')
       if ((saved.baseUrl || '') !== loadedAt) {
         // 服务端配置变化（首次加载 / 保存后）时同步表单
         setLoadedAt(saved.baseUrl || '')
@@ -1429,6 +1434,15 @@ window.__ModuleLoader__.load({
           { style: card },
           h('div', { style: cardTitle }, '写入默认值'),
           h('div', { style: hint }, '写入 CRM 时，线索会先创建再移入这里选中的线索池；意向产品随线索一起写入。'),
+          crmOptions && crmOptions.warnings && crmOptions.warnings.length > 0
+            ? h(
+                'div',
+                { style: { marginTop: 8, padding: '8px 10px', borderRadius: 8, border: `1px solid ${mix(DANGER, 35)}`, background: DANGER_SOFT, color: DANGER, fontSize: 12, lineHeight: 1.6 } },
+                h('div', { style: { fontWeight: 600, marginBottom: 2 } }, '线索池 / 产品清单拉取失败（通常是 API Key 权限不足）'),
+                crmOptions.warnings.map((item) => h('div', { key: item.source }, `${item.source}：${item.message}`)),
+                h('div', { style: { marginTop: 4 } }, '解决办法：① 让 CRM 管理员给当前账号的「模块设置-更新」与「产品管理-读取」权限；② 或换用管理员 API Key；③ 或者直接在下方手动填写线索池 ID。'),
+              )
+            : null,
           h(
             'div',
             { style: { ...row, marginTop: 8 } },
@@ -1447,6 +1461,14 @@ window.__ModuleLoader__.load({
             crmOptions && crmOptions.configured === false
               ? h('span', { style: { ...hint, marginTop: 0 } }, '先保存并测试连接，才会加载线索池与产品。')
               : null,
+          ),
+          h(
+            'div',
+            { style: { ...row, marginTop: 8 } },
+            h('input', { style: { ...input, width: 'auto', minWidth: 200 }, value: manualPoolId, placeholder: '手动填写线索池 ID（清单拉不到时用）', onChange: (event) => setManualPoolId(event.target.value) }),
+            h('button', { type: 'button', style: smallButton, onClick: () => onCrmConfig(manualPoolId.trim()) }, '保存线索池 ID'),
+            h('input', { style: { ...input, width: 'auto', minWidth: 180 }, value: manualProductId, placeholder: '手动填写产品 ID（可选）', onChange: (event) => setManualProductId(event.target.value) }),
+            h('button', { type: 'button', style: smallButton, onClick: () => onCrmConfig(undefined, manualProductId.trim()) }, '保存产品 ID'),
           ),
         ),
       )

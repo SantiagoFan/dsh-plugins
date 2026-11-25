@@ -230,14 +230,20 @@ export async function crmCreateLead(payload, poolId) {
   return { id, created }
 }
 
-/** 线索池 / 意向产品列表（配置页与写入前选择用）。 */
+/** 线索池 / 意向产品列表（配置页与写入前选择用）；接口 403/失败时返回 warnings，不再静默变空。 */
 export async function crmOptions() {
   const config = loadCrmConfig()
-  if (!crmConfigured(config)) return { ok: false, configured: false, pools: [], products: [] }
-  const [poolsData, productsData] = await Promise.all([
-    crmRequest({ method: 'POST', path: '/lead-pool/page', body: { current: 1, pageSize: 50 }, config }).catch(() => null),
-    crmRequest({ method: 'POST', path: '/product/page', body: { current: 1, pageSize: 50 }, config }).catch(() => null),
-  ])
+  if (!crmConfigured(config)) return { ok: false, configured: false, pools: [], products: [], warnings: [] }
+  const warnings = []
+  const load = async (label, apiPath) => {
+    try {
+      return await crmRequest({ method: 'POST', path: apiPath, body: { current: 1, pageSize: 50 }, config })
+    } catch (error) {
+      warnings.push({ source: label, message: String((error && error.message) || error) })
+      return null
+    }
+  }
+  const [poolsData, productsData] = await Promise.all([load('线索池', '/lead-pool/page'), load('产品', '/product/page')])
   const listOf = (payload) => {
     if (!payload) return []
     if (Array.isArray(payload)) return payload
@@ -252,5 +258,6 @@ export async function crmOptions() {
     readOnly: config.readOnly !== false,
     pools: listOf(poolsData).map((pool) => ({ id: String(pool.id || ''), name: String(pool.name || '') })),
     products: listOf(productsData).map((product) => ({ id: String(product.id || ''), name: String(product.name || '') })),
+    warnings,
   }
 }

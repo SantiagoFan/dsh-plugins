@@ -921,6 +921,7 @@ async function crmOptions(ctx) {
   const state = readStateSafe(ctx)
   const listed = await crmListOptions()
   const config = loadCrmConfig()
+  const warnings = listed.warnings || []
   return {
     ok: true,
     configured: listed.configured,
@@ -929,8 +930,13 @@ async function crmOptions(ctx) {
     readOnly: listed.readOnly !== false,
     pools: listed.pools || [],
     products: listed.products || [],
+    warnings,
     crm: state.crm,
-    hint: listed.configured ? '' : 'CRM 还没有配置：到「CRM」页填服务器地址与 API Key。',
+    hint: !listed.configured
+      ? 'CRM 还没有配置：到「CRM」页填服务器地址与 API Key。'
+      : warnings.length > 0
+        ? `有 ${warnings.length} 个清单接口返回错误（多为 API Key 权限不足），可直接手动填写 ID；详情见 warnings。`
+        : '',
   }
 }
 

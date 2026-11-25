@@ -660,6 +660,30 @@ check('CRM·无手机号的行不能勾选', checkboxes.some((node) => node.prop
 const readonlyView = render({ tab: 'results', results: resultsFixture, crmOptions: { ...CRM_OPTIONS, writable: false } })
 checkText(readonlyView, 'CRM·只读提示', 'CRM：只读')
 
+// 权限不足：清单接口 403 时界面要给出明确提示，而不是只显示一个空下拉框
+const CRM_DENIED = {
+  ok: true,
+  configured: true,
+  writable: true,
+  baseUrl: 'https://crm.znmg.cn',
+  pools: [],
+  products: [],
+  warnings: [
+    { source: '线索池', message: 'CRM 业务错误：Subject does not have permission [MODULE_SETTING:UPDATE]' },
+    { source: '产品', message: 'CRM 业务错误：Subject does not have permission [PRODUCT_MANAGEMENT:READ]' },
+  ],
+  crm: { poolId: '494107004965494784', poolName: 'EvSim线索公海' },
+}
+const deniedResults = render({ tab: 'results', results: resultsFixture, crmOptions: CRM_DENIED })
+checkText(deniedResults, 'CRM 权限不足·线索页提示', 'CRM 清单拉取失败')
+checkText(deniedResults, 'CRM 权限不足·线索页权限名', 'MODULE_SETTING:UPDATE')
+const deniedCrmTab = render({ tab: 'crm', crmStatus: { ok: true, configured: true, crm: { baseUrl: 'https://crm.znmg.cn', readOnly: false } }, crmOptions: CRM_DENIED })
+checkText(deniedCrmTab, 'CRM 权限不足·配置页提示', 'API Key 权限不足')
+checkText(deniedCrmTab, 'CRM 权限不足·解决办法', '模块设置-更新')
+checkText(deniedCrmTab, 'CRM 权限不足·手动填写提示', '手动填写线索池 ID')
+check('CRM 权限不足·线索池 ID 输入框', hasPlaceholder(deniedCrmTab, '手动填写线索池 ID（清单拉不到时用）'))
+check('CRM 权限不足·产品 ID 输入框', hasPlaceholder(deniedCrmTab, '手动填写产品 ID（可选）'))
+
 // ---------------------------------------------------------------- CRM 页签（连接配置）
 const CRM_STATUS = {
   ok: true,

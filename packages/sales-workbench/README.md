@@ -136,6 +136,7 @@ CRM 客户端与配置已内置到本插件，**不再需要启用独立的「Co
 - **连接配置**：服务器地址、Access Key、Secret Key、可选组织 ID；「保存并测试连接」会立即验证连通与鉴权，并显示当前登录账号；
 - **只读开关**：默认只读（拒绝写入），确认无误后取消勾选才允许真正创建线索；
 - **写入默认值**：默认线索池与意向产品，写入时使用；
+- **清单需要权限**：拉取线索池调用 `/lead-pool/page`（需要 `MODULE_SETTING:UPDATE`），拉取产品调用 `/product/page`（需要 `PRODUCT_MANAGEMENT:READ`）。Key 权限不足时界面会直接显示 403 原因，并支持手动填写线索池/产品 ID（不必等管理员加权限）；
 - **配置位置**：`~/.dsh/data-collector/crm.json`（0600）；第一次打开会自动**迁移**旧插件 `~/.dsh/cordys-crm/config.json` 的地址与 Key，无需重新输入；
 - 接口：`GET /crm/status`、`POST /crm/connect`、`POST /crm/test`、`GET /crm/options`、`POST /crm/precheck`、`POST /crm/push`、`POST /crm/config`；
 - 工具动作：`crm_status / crm_connect / crm_search / crm_options / crm_precheck / crm_push / set_crm`。
