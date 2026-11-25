@@ -16,8 +16,8 @@
     {
       "dir": "company-knowledge",
       "slug": "company-knowledge",
-      "publish": false,
-      "note": "企业知识库：本机/内网使用，暂不发布 npm"
+      "publish": true,
+      "note": "2026-11-25 决定发布 npm"
     },
     {
       "dir": "sales-workbench",
@@ -34,8 +34,8 @@
     {
       "dir": "todo-workbench",
       "slug": "todo-workbench",
-      "publish": false,
-      "note": "私有包：从 @local/ 改为 @mindlink-ai/，profile 已同步重装"
+      "publish": true,
+      "note": "2026-11-25 决定发布 npm"
     },
     {
       "dir": "wechat-bot",

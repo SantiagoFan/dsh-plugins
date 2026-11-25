@@ -1,7 +1,10 @@
 {
   "name": "@mindlink-ai/dsh-todo-workbench",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "description": "Personal todo workbench: manage tasks in a DSH sidebar panel with categories, priority, due dates, notes, and tags, and record todos from the conversation into the same list.",
   "keywords": [
@@ -11,6 +14,15 @@
     "tasks",
     "checklist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SantiagoFan/dsh-plugins.git",
+    "directory": "packages/todo-workbench"
+  },
+  "homepage": "https://github.com/SantiagoFan/dsh-plugins#readme",
+  "bugs": {
+    "url": "https://github.com/SantiagoFan/dsh-plugins/issues"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -49,5 +61,6 @@
       ]
     }
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "思链科技（MindLink）"
 }
