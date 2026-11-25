@@ -1,17 +1,18 @@
-﻿import { run } from './git.mjs'
+import { run } from './git.mjs'
 
 const NPM = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
-function npm(args, { cwd, registry, cache } = {}) {
+function npm(args, { cwd, registry, cache, preferOnline = false } = {}) {
   const env = {}
   if (cache) env.npm_config_cache = cache
   if (registry) env.npm_config_registry = registry
+  if (preferOnline) env.npm_config_prefer_online = 'true'
   return run(NPM, args, { cwd, env, timeout: 90000 })
 }
 
 /** Look up the published state of a package name on the registry. */
 export function npmView(name, { cwd, registry, cache } = {}) {
-  const result = npm(['view', name, 'version', 'dist-tags', '--json'], { cwd, registry, cache })
+  const result = npm(['view', name, 'version', 'dist-tags', '--json'], { cwd, registry, cache, preferOnline: true })
   if (result.status !== 0) {
     const combined = `${result.stderr}${result.stdout}`
     const notFound = /E404|404 Not Found|is not in this registry/i.test(combined)
