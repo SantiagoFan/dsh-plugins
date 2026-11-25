@@ -62,8 +62,7 @@ jobs:
           CLAIMS=$(echo "${PAYLOAD}" | base64 -d 2>/dev/null | jq -c '{repository, repository_owner, workflow_ref, job_workflow_ref, environment, ref, event_name, sub}')
           echo "OIDC claims: ${CLAIMS}"
           echo "::notice::OIDC claims: ${CLAIMS}"
-          echo "::error::DIAG(OIDC claims)=${CLAIMS}"
-          echo "npm 侧必须一致：Repository=SantiagoFan/dsh-plugins, Workflow file name=publish.yml, Environment=(空)"
+          echo "对照 npm 侧：Repository=SantiagoFan/dsh-plugins, Workflow file name=publish.yml, Environment=(空), Allowed actions=☑ npm publish"
 
       - name: Resolve package from tag
         id: ws
