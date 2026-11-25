@@ -100,7 +100,7 @@ npm view @mindlink-ai/dsh-wechat-bot version
 ## 作者信息
 
 - 作者：思链科技（MindLink）
-- 插件：`@mindlink-ai/dsh-wechat-bot` v1.3.0
+- 插件：`@mindlink-ai/dsh-wechat-bot` v2.0.0
 - 通道：微信官方 iLink（ClawBot）；本地优先，聊天数据只留在本机
 - 许可：MIT
 
