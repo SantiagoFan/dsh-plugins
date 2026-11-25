@@ -1,0 +1,4 @@
+- insert:
+    - id: data-collector
+      name: '@mindlink-ai/dsh-sales-workbench'
+      config: {}

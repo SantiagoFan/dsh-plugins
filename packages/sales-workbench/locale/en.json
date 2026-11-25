@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Market leads",
+    "description": "Configure the collection scope (add cities one by one, e.g. Hohhot, Baotou), topics (business keywords) and channels (RSS/Atom, JSON API, HTML list, web search) in the sidebar, then let it run every morning. It fetches public notices and pages and extracts prospective-customer leads: company name, contact, phone, region, source URL and collection time, following detail pages when a field is missing and dropping leads outside the scope. Browse leads by day, copy them, or export CSV for your CRM; the agent can read the same leads. Everything stays on this machine under ~/.dsh/data-collector/. Extraction is heuristic, so verify a lead against its source URL before outreach."
+  }
+}

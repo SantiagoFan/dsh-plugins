@@ -1,0 +1,4 @@
+- insert:
+    - id: todo-workbench
+      name: '@mindlink-ai/dsh-todo-workbench'
+      config: {}

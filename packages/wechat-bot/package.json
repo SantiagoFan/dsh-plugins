@@ -1,0 +1,68 @@
+{
+  "name": "@mindlink-ai/dsh-wechat-bot",
+  "version": "1.3.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "思链科技（MindLink）",
+  "license": "MIT",
+  "type": "module",
+  "description": "Personal WeChat bot via the official iLink (ClawBot) channel: sidebar status panel, account info, push-failure records panel, and an agent tool that pushes the daily brief to your WeChat.",
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "wechat",
+    "wechat-bot",
+    "ilink",
+    "clawbot"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SantiagoFan/dsh-plugins.git",
+    "directory": "packages/wechat-bot"
+  },
+  "homepage": "https://github.com/SantiagoFan/dsh-plugins#readme",
+  "bugs": {
+    "url": "https://github.com/SantiagoFan/dsh-plugins/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "bridge/ilink.js",
+    "bridge/render.js",
+    "bridge/relay.js",
+    "vendor/qrcode.cjs",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/relay.test.mjs && node test/plugin.integration.test.mjs && node test/failures.test.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  }
+}

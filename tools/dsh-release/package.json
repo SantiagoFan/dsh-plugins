@@ -1,0 +1,23 @@
+{
+  "name": "@mindlink-ai/dsh-release",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Release tooling for MindLink DSH plugins: enforce the @mindlink-ai/dsh-* package naming contract, keep cordis.patch.yml / module ids / README in sync, then bump, commit, tag, push and publish to npm.",
+  "license": "MIT",
+  "bin": {
+    "dsh-release": "./bin/dsh-release.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "dsh-release.config.json",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node test/run.mjs"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "企业知识库",
+    "description": "从本地或 NAS 读取公司 Markdown 知识库：左侧目录树，右侧富文本（所见即所得）编辑，front matter 单独维护；保存写回并重索引，同时为 DSH 提供检索与全文阅读工具。"
+  }
+}

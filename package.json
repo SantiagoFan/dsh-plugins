@@ -1,0 +1,23 @@
+{
+  "name": "@mindlink-ai/dsh-plugins",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MindLink DSH plugin monorepo: five installable bundles plus the shared naming/release tooling.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "tools/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node tools/dsh-release/bin/dsh-release.mjs check",
+    "fix": "node tools/dsh-release/bin/dsh-release.mjs fix",
+    "release": "node tools/dsh-release/bin/dsh-release.mjs release",
+    "test": "node tools/dsh-release/test/run.mjs",
+    "test:all": "node scripts/test-all.mjs",
+    "list": "node tools/dsh-release/bin/dsh-release.mjs list"
+  }
+}

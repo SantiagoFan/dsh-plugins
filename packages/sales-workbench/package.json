@@ -1,0 +1,73 @@
+{
+  "name": "@mindlink-ai/dsh-sales-workbench",
+  "version": "3.1.1",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "思链科技（MindLink）",
+  "license": "MIT",
+  "type": "module",
+  "description": "Market leads with built-in CRM: configure a collection scope (cities), topics and channels (RSS / JSON API / HTML list / web search) in a DSH sidebar panel, fetch public notices every morning, extract prospective-customer leads into a local SQLite database with pagination, search, filters and XLSX export, and write deduplicated leads into Cordys CRM lead pools. CRM connection, API keys and read-only switch are managed inside the same panel; the agent uses the data_collector tool for both leads and CRM.",
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "leads",
+    "collector",
+    "sqlite",
+    "pagination",
+    "rss",
+    "monitor",
+    "crm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SantiagoFan/dsh-plugins.git",
+    "directory": "packages/sales-workbench"
+  },
+  "homepage": "https://github.com/SantiagoFan/dsh-plugins#readme",
+  "bugs": {
+    "url": "https://github.com/SantiagoFan/dsh-plugins/issues"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "cordis.patch.yml",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "test"
+  ],
+  "scripts": {
+    "test": "node test/time.mjs && node test/leads.mjs",
+    "test:db": "node test/db.mjs",
+    "test:host": "node test/host.mjs",
+    "test:client": "node test/client-render.mjs",
+    "test:xlsx": "node test/xlsx.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  }
+}

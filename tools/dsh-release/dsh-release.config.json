@@ -1,0 +1,47 @@
+{
+  "scope": "@mindlink-ai",
+  "prefix": "dsh-",
+  "owner": "SantiagoFan",
+  "author": "思链科技（MindLink）",
+  "license": "MIT",
+  "monorepo": {
+    "repo": "dsh-plugins"
+  },
+  "defaultEngines": ">=20",
+  "defaultBranch": "main",
+  "commitMessage": "chore(release): {tag}",
+  "root": "../../packages",
+  "npmCache": ".cache/npm",
+  "plugins": [
+    {
+      "dir": "company-knowledge",
+      "slug": "company-knowledge",
+      "publish": false,
+      "note": "企业知识库：本机/内网使用，暂不发布 npm"
+    },
+    {
+      "dir": "sales-workbench",
+      "slug": "sales-workbench",
+      "publish": true,
+      "note": "原 data-collector-plugin（旧包名 dsh-sales-workbench 已弃用）"
+    },
+    {
+      "dir": "newmedia-workbench",
+      "slug": "newmedia-workbench",
+      "publish": false,
+      "note": "暂不发布 npm（2026-11-25 决定），先只在本机使用"
+    },
+    {
+      "dir": "todo-workbench",
+      "slug": "todo-workbench",
+      "publish": false,
+      "note": "私有包：从 @local/ 改为 @mindlink-ai/，profile 已同步重装"
+    },
+    {
+      "dir": "wechat-bot",
+      "slug": "wechat-bot",
+      "publish": true,
+      "note": "npm 上已有 1.0.4；迁入 monorepo 后需重新登记 Trusted Publisher"
+    }
+  ]
+}

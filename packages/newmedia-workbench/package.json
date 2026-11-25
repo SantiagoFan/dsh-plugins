@@ -1,0 +1,64 @@
+{
+  "name": "@mindlink-ai/dsh-newmedia-workbench",
+  "version": "0.6.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "思链科技（MindLink）",
+  "license": "MIT",
+  "type": "module",
+  "description": "New media workbench: manage account positioning cards in a DSH sidebar panel. One card can link several platform accounts (Douyin, WeChat Channels, Xiaohongshu, WeChat Official Account, Bilibili, Kuaishou, YouTube, TikTok) and fetch follower counts with one click. The panel keeps an overview with statistics on top and switches between cards, platform accounts, and credentials by tab.",
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "new-media",
+    "positioning",
+    "spoken-script",
+    "followers",
+    "douyin",
+    "xiaohongshu",
+    "shipinhao"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib/followers.js",
+    "lib/settings.js",
+    "cordis.patch.yml",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "test/smoke.mjs",
+    "test/http.mjs",
+    "test/followers.mjs",
+    "test/client-render.mjs"
+  ],
+  "scripts": {
+    "test": "node test/followers.mjs && node test/smoke.mjs && node test/http.mjs && node test/client-render.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  }
+}

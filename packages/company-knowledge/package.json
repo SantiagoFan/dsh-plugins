@@ -1,0 +1,33 @@
+{
+  "name": "@mindlink-ai/dsh-company-knowledge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Company knowledge base for DSH: indexes the Markdown enterprise memory stored on a local/NAS folder, gives the Agent search/read tools and an automatic prompt context, and a settings page to point at the folder.",
+  "author": "思链科技（MindLink）",
+  "license": "MIT",
+  "keywords": ["dsh-plugin", "dsh", "knowledge-base", "nas", "enterprise-memory"],
+  "engines": { "node": ">=20" },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "vendor/**",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}

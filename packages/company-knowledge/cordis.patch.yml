@@ -1,0 +1,4 @@
+- insert:
+    - id: company-kb
+      name: '@mindlink-ai/dsh-company-knowledge'
+      config: {}

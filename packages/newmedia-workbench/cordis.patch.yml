@@ -1,0 +1,4 @@
+- insert:
+    - id: newmedia-workbench
+      name: '@mindlink-ai/dsh-newmedia-workbench'
+      config: {}

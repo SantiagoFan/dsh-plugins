@@ -1,0 +1,53 @@
+{
+  "name": "@mindlink-ai/dsh-todo-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal todo workbench: manage tasks in a DSH sidebar panel with categories, priority, due dates, notes, and tags, and record todos from the conversation into the same list.",
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "todo",
+    "tasks",
+    "checklist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib/store.js",
+    "cordis.patch.yml",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "test/store.mjs",
+    "test/host.mjs",
+    "test/client-render.mjs"
+  ],
+  "scripts": {
+    "test": "node test/store.mjs && node test/host.mjs && node test/client-render.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  },
+  "license": "MIT"
+}

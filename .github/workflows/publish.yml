@@ -1,0 +1,74 @@
+name: Publish workspace to npm
+
+# tag 形如 dsh-wechat-bot@v1.4.0（短包名@v版本），只发布对应的那个 workspace 包
+on:
+  push:
+    tags:
+      - 'dsh-*@v*'
+
+permissions:
+  contents: read
+  id-token: write # npm Trusted Publishing (OIDC) + provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted Publishing 需要 npm >= 11.5.1
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          echo "npm version: $(npm --version)"
+
+      - name: Resolve package from tag
+        id: ws
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          SHORT="${TAG%@*}"
+          TAG_VERSION="${TAG##*@v}"
+          echo "tag=${TAG} short=${SHORT} version=${TAG_VERSION}"
+          node scripts/resolve-workspace.mjs "${SHORT}" > /tmp/ws.env
+          cat /tmp/ws.env >> "$GITHUB_ENV"
+          . /tmp/ws.env
+          echo "dir=${DIR}" >> "$GITHUB_OUTPUT"
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          if [ "${VERSION}" != "${TAG_VERSION}" ]; then
+            echo "::error::tag ${TAG} 与 ${NAME} 的 package.json 版本 ${VERSION} 不一致"
+            exit 1
+          fi
+
+      - name: Validate package contents
+        working-directory: ${{ steps.ws.outputs.dir }}
+        run: npm pack --dry-run
+
+      - name: Publish to npm
+        shell: bash
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: ${{ steps.ws.outputs.dir }}
+        run: |
+          set +e
+          npm publish --access public --provenance 2>&1 | tee /tmp/publish.log
+          code=${PIPESTATUS[0]}
+          if [ "$code" -ne 0 ] && [ -n "${NPM_TOKEN}" ]; then
+            echo "OIDC publish failed; retrying with NPM_TOKEN (without provenance)"
+            NODE_AUTH_TOKEN="${NPM_TOKEN}" npm publish --access public 2>&1 | tee /tmp/publish.log
+            code=${PIPESTATUS[0]}
+          fi
+          if [ "$code" -ne 0 ]; then
+            grep -E "npm (error|ERR)" /tmp/publish.log | head -n 20 | while IFS= read -r line; do
+              echo "::error::${line}"
+            done
+            exit "$code"
+          fi
