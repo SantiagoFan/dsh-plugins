@@ -5,6 +5,12 @@ on:
   push:
     tags:
       - 'dsh-*@v*'
+  # 手动触发用一个已存在的 tag 重试，不必新打版本
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要模拟的发布 tag，例如 dsh-todo-workbench@v1.0.1'
+        required: true
 
 permissions:
   contents: read
@@ -13,6 +19,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,12 +37,40 @@ jobs:
           npm install -g npm@latest
           echo "npm version: $(npm --version)"
 
+      # 诊断：把 GitHub 实际签发的 OIDC 声明打出来，和 npm 上登记的
+      # Repository / Workflow file name / Environment 三个字段逐项对照。
+      - name: OIDC claims (diagnostic)
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
+            echo "::error::无法获取 OIDC token（缺少 id-token: write 权限？）"
+            exit 0
+          fi
+          TOKEN=$(curl -sS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" | jq -r .value)
+          if [ -z "${TOKEN}" ] || [ "${TOKEN}" = "null" ]; then
+            echo "::error::OIDC token 请求失败"
+            exit 0
+          fi
+          PAYLOAD=$(echo "${TOKEN}" | cut -d. -f2 | tr '_-' '/+')
+          case $(( ${#PAYLOAD} % 4 )) in
+            2) PAYLOAD="${PAYLOAD}==" ;;
+            3) PAYLOAD="${PAYLOAD}=" ;;
+          esac
+          CLAIMS=$(echo "${PAYLOAD}" | base64 -d 2>/dev/null | jq -c '{repository, repository_owner, workflow_ref, job_workflow_ref, environment, ref, event_name, sub}')
+          echo "OIDC claims: ${CLAIMS}"
+          echo "::notice::OIDC claims: ${CLAIMS}"
+          echo "::error::DIAG(OIDC claims)=${CLAIMS}"
+          echo "npm 侧必须一致：Repository=SantiagoFan/dsh-plugins, Workflow file name=publish.yml, Environment=(空)"
+
       - name: Resolve package from tag
         id: ws
         shell: bash
         run: |
           set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
+          TAG="${RELEASE_TAG}"
           SHORT="${TAG%@*}"
           TAG_VERSION="${TAG##*@v}"
           echo "tag=${TAG} short=${SHORT} version=${TAG_VERSION}"
