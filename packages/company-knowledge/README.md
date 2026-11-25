@@ -188,6 +188,6 @@ POST 带同源校验（跨域 `Origin` 直接 403）；保存接口请求体上�
 ## 11. 作者与许可
 
 - 作者：思链科技（MindLink）
-- 插件：`@mindlink-ai/dsh-company-knowledge` · v1.0.0
+- 插件：`@mindlink-ai/dsh-company-knowledge` · v2.0.0
 - 许可：MIT
 - 面板位置：左侧菜单栏「企业知识库」图标，或 设置 → 企业知识库；左侧图标打开的是「目录树 + 富文本编辑器」工作台，设置里是配置与索引状态。
